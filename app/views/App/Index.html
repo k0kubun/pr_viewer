@@ -1,0 +1,22 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<header class="hero-unit">
+  <div class="container">
+    <div class="row">
+      <div class="hero-text">
+        <h1>Pull Req Viewer</h1>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+{{template "footer.html" .}}
