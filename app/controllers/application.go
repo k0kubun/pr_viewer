@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goauth2/oauth"
 	"github.com/revel/revel"
 	"pr_viewer/app/models"
+	"pr_viewer/app/routes"
 )
 
 var GITHUB = &oauth.Config{
@@ -20,6 +21,9 @@ type Application struct {
 }
 
 func (c Application) Index() revel.Result {
+	if c.loginUser = c.RenderArgs["loginUser"].(*models.User); c.loginUser != nil {
+		return c.Redirect(routes.Users.Show(c.loginUser.Login))
+	}
 	return c.Render()
 }
 
