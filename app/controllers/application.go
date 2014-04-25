@@ -2,9 +2,8 @@ package controllers
 
 import (
 	"code.google.com/p/goauth2/oauth"
-	"fmt"
-	"github.com/google/go-github/github"
 	"github.com/revel/revel"
+	"pr_viewer/app/models"
 )
 
 var GITHUB = &oauth.Config{
@@ -33,14 +32,27 @@ func (c Application) Auth(code string) revel.Result {
 	}
 
 	accessToken := token.AccessToken
-	transport = &oauth.Transport{
-		Token: &oauth.Token{AccessToken: accessToken},
-	}
-
-	client := github.NewClient(transport.Client())
-	repos, _, _ := client.Repositories.List("octocat", nil)
-	for _, repo := range repos {
-		fmt.Println(*repo.Name)
+	c.Session["accessToken"] = accessToken
+	c.RenderArgs["loginUser"] = models.FindUserByAccessToken(accessToken)
+	if c.loginUser() == nil {
+		c.RenderArgs["loginUser"] = models.CreateUser(map[string]string{
+			"AccessToken": accessToken,
+		})
 	}
 	return c.Redirect(Application.Index)
+}
+
+func (c Application) loginUser() *models.User {
+	if c.RenderArgs["loginUser"] != nil {
+		return c.RenderArgs["loginUser"].(*models.User)
+	}
+	return nil
+}
+
+func (c Application) authorize() revel.Result {
+	if accessToken, ok := c.Session["accessToken"]; ok {
+		user := models.FindUserByAccessToken(accessToken)
+		c.RenderArgs["loginUser"] = user
+	}
+	return nil
 }

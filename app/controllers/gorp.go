@@ -8,21 +8,18 @@ import (
 	"pr_viewer/app/models"
 )
 
-var (
-	DbMap *gorp.DbMap
-)
-
 func InitDB() {
 	db, err := sql.Open("sqlite3", "./db/app.db")
 	if err != nil {
 		panic(err.Error())
 	}
-	DbMap = &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
+	models.DbMap = &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
 
-	t := DbMap.AddTable(models.User{}).SetKeys(true, "Id")
-	t.ColMap("Name").MaxSize = 20
+	t := models.DbMap.AddTable(models.User{}).SetKeys(true, "Id")
+	t.ColMap("AccessToken").MaxSize = 50
 
-	DbMap.CreateTables()
+	models.DbMap.DropTables()
+	models.DbMap.CreateTables()
 }
 
 type GorpController struct {
@@ -31,7 +28,7 @@ type GorpController struct {
 }
 
 func (c *GorpController) Begin() revel.Result {
-	txn, err := DbMap.Begin()
+	txn, err := models.DbMap.Begin()
 	if err != nil {
 		panic(err)
 	}
