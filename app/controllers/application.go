@@ -12,24 +12,24 @@ var GITHUB = &oauth.Config{
 	ClientSecret: "6b096615a2bfc91d9a8e8f0808216073d760f1fb",
 	AuthURL:      "https://github.com/login/oauth/authorize",
 	TokenURL:     "https://github.com/login/oauth/access_token",
-	RedirectURL:  "http://localhost:9000/App/Auth",
+	RedirectURL:  "http://localhost:9000/Application/Auth",
 }
 
-type App struct {
+type Application struct {
 	*revel.Controller
 }
 
-func (c App) Index() revel.Result {
+func (c Application) Index() revel.Result {
 	url := GITHUB.AuthCodeURL("state")
 	return c.Render(url)
 }
 
-func (c App) Auth(code string) revel.Result {
+func (c Application) Auth(code string) revel.Result {
 	transport := &oauth.Transport{Config: GITHUB}
 	token, err := transport.Exchange(code)
 	if err != nil {
 		revel.ERROR.Println(err)
-		return c.Redirect(App.Index)
+		return c.Redirect(Application.Index)
 	}
 
 	accessToken := token.AccessToken
@@ -42,5 +42,5 @@ func (c App) Auth(code string) revel.Result {
 	for _, repo := range repos {
 		fmt.Println(*repo.Name)
 	}
-	return c.Redirect(App.Index)
+	return c.Redirect(Application.Index)
 }
