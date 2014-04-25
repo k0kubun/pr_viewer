@@ -16,7 +16,7 @@ func InitDB() {
 	models.DbMap = &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
 
 	t := models.DbMap.AddTable(models.User{}).SetKeys(true, "Id")
-	t.ColMap("AccessToken").MaxSize = 50
+	t.ColMap("AccessToken").MaxSize = 40
 
 	models.DbMap.DropTables()
 	models.DbMap.CreateTables()
