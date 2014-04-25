@@ -28,7 +28,13 @@
 						<li><a href="#">Link</a></li>
 					</ul>
 					<ul class="nav pull-right">
-						<li><a href="/auth">Login</a></li>
+						<li>
+							{{if .loginUser}}
+								{{.loginUser.Login}}
+							{{else}}
+								<a href="{{.loginUrl}}">Login</a>
+							{{end}}
+						</li>
 					</ul>
 				</div>
 			</div>

@@ -8,6 +8,7 @@ func init() {
 	revel.OnAppStart(InitDB)
 	revel.InterceptMethod((*GorpController).Begin, revel.BEFORE)
 	revel.InterceptMethod(Application.authorize, revel.BEFORE)
+	revel.InterceptMethod(Application.setLoginUrl, revel.BEFORE)
 	revel.InterceptMethod((*GorpController).Commit, revel.AFTER)
 	revel.InterceptMethod((*GorpController).Rollback, revel.FINALLY)
 }

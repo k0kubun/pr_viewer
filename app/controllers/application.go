@@ -16,11 +16,11 @@ var GITHUB = &oauth.Config{
 
 type Application struct {
 	*revel.Controller
+	loginUser *models.User
 }
 
 func (c Application) Index() revel.Result {
-	url := GITHUB.AuthCodeURL("state")
-	return c.Render(url)
+	return c.Render()
 }
 
 func (c Application) Auth(code string) revel.Result {
@@ -33,26 +33,42 @@ func (c Application) Auth(code string) revel.Result {
 
 	accessToken := token.AccessToken
 	c.Session["accessToken"] = accessToken
-	c.RenderArgs["loginUser"] = models.FindUserByAccessToken(accessToken)
-	if c.loginUser() == nil {
-		c.RenderArgs["loginUser"] = models.CreateUser(map[string]string{
+	c.loginUser = models.FindUserByAccessToken(accessToken)
+	if c.loginUser == nil {
+		c.loginUser = models.CreateUser(map[string]string{
 			"AccessToken": accessToken,
 		})
 	}
+	c.RenderArgs["loginUser"] = c.loginUser
+	c.setLoginName()
 	return c.Redirect(Application.Index)
-}
-
-func (c Application) loginUser() *models.User {
-	if c.RenderArgs["loginUser"] != nil {
-		return c.RenderArgs["loginUser"].(*models.User)
-	}
-	return nil
 }
 
 func (c Application) authorize() revel.Result {
 	if accessToken, ok := c.Session["accessToken"]; ok {
-		user := models.FindUserByAccessToken(accessToken)
-		c.RenderArgs["loginUser"] = user
+		c.loginUser = models.FindUserByAccessToken(accessToken)
+		c.RenderArgs["loginUser"] = c.loginUser
 	}
 	return nil
+}
+
+func (c Application) setLoginUrl() revel.Result {
+	c.RenderArgs["loginUrl"] = GITHUB.AuthCodeURL("")
+	return nil
+}
+
+func (c Application) setLoginName() {
+	if c.loginUser == nil {
+		return
+	}
+
+	client := c.loginUser.Github()
+	if client != nil {
+		githubUser, _, err := client.Users.Get("")
+		if err != nil {
+			panic(err)
+		}
+		c.loginUser.Login = *githubUser.Login
+		c.loginUser.Save()
+	}
 }
