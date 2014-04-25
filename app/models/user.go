@@ -2,6 +2,7 @@ package models
 
 import (
 	"code.google.com/p/goauth2/oauth"
+	"fmt"
 	"github.com/google/go-github/github"
 )
 
@@ -12,8 +13,13 @@ func CreateUser(attributes map[string]string) *User {
 	return &user
 }
 
-func FindUserByAccessToken(accessToken string) *User {
-	users, err := DbMap.Select(User{}, "select * from User where AccessToken = ?", accessToken)
+func FindUserBy(attributes map[string]string) *User {
+	query := "select * from User"
+	for key, value := range attributes {
+		query = fmt.Sprintf("%s where %s = '%s'", query, key, value)
+	}
+
+	users, err := DbMap.Select(User{}, query)
 	if err != nil {
 		panic(err)
 	}

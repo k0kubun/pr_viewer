@@ -37,7 +37,7 @@ func (c Application) Auth(code string) revel.Result {
 
 	accessToken := token.AccessToken
 	c.Session["accessToken"] = accessToken
-	c.loginUser = models.FindUserByAccessToken(accessToken)
+	c.loginUser = models.FindUserBy(map[string]string{"AccessToken": accessToken})
 	if c.loginUser == nil {
 		c.loginUser = models.CreateUser(map[string]string{
 			"AccessToken": accessToken,
@@ -57,7 +57,7 @@ func (c Application) Logout() revel.Result {
 
 func (c Application) authorize() revel.Result {
 	if accessToken, ok := c.Session["accessToken"]; ok {
-		c.loginUser = models.FindUserByAccessToken(accessToken)
+		c.loginUser = models.FindUserBy(map[string]string{"AccessToken": accessToken})
 		c.RenderArgs["loginUser"] = c.loginUser
 	}
 	return nil
