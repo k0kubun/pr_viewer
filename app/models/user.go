@@ -7,7 +7,7 @@ import (
 
 func CreateUser(attributes map[string]string) *User {
 	accessToken := attributes["AccessToken"]
-	user := User{0, "", accessToken}
+	user := User{0, "", "", accessToken}
 	DbMap.Insert(&user)
 	return &user
 }
@@ -39,6 +39,7 @@ func AllUsers() []*User {
 type User struct {
 	Id          int
 	Login       string
+	AvatarURL   string
 	AccessToken string
 }
 

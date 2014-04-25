@@ -40,7 +40,14 @@ func (c Application) Auth(code string) revel.Result {
 		})
 	}
 	c.RenderArgs["loginUser"] = c.loginUser
-	c.setLoginName()
+	c.setUserAttributes()
+	return c.Redirect(Application.Index)
+}
+
+func (c Application) Logout() revel.Result {
+	for key := range c.Session {
+		delete(c.Session, key)
+	}
 	return c.Redirect(Application.Index)
 }
 
@@ -57,7 +64,7 @@ func (c Application) setLoginUrl() revel.Result {
 	return nil
 }
 
-func (c Application) setLoginName() {
+func (c Application) setUserAttributes() {
 	if c.loginUser == nil {
 		return
 	}
@@ -69,6 +76,7 @@ func (c Application) setLoginName() {
 			panic(err)
 		}
 		c.loginUser.Login = *githubUser.Login
+		c.loginUser.AvatarURL = *githubUser.AvatarURL
 		c.loginUser.Save()
 	}
 }

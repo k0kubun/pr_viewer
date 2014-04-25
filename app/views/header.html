@@ -30,7 +30,10 @@
 					<ul class="nav pull-right">
 						<li>
 							{{if .loginUser}}
-								{{.loginUser.Login}}
+								<a href="/Application/Logout">
+									<img src="{{.loginUser.AvatarURL}}" width="16px">
+									Logout
+								</a>
 							{{else}}
 								<a href="{{.loginUrl}}">Login</a>
 							{{end}}
