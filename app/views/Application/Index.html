@@ -1,25 +1,24 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
 
-<header class="hero-unit">
-  <div class="container">
-    <div class="row">
-      <div class="hero-text">
-        <h1>Pull Req Viewer</h1>
-      </div>
-    </div>
-  </div>
-</header>
-
-<div class="container">
-  <div class="row">
-    <div class="span6">
-      {{template "flash.html" .}}
-			<a href="{{.loginUrl}}">
-				Authenticate
-			</a>
-    </div>
-  </div>
-</div>
+{{if .loginUser}}
+	<h1>Pull Requests</h1>
+{{else}}
+	<header class="hero-unit">
+		<div class="container">
+			<div class="row">
+				<div class="hero-text">
+					<h1>Pull Req Viewer</h1>
+					<p>
+						Show the pull requests that your favorite users created.<br>
+						You'll see how many merged pull requests they have
+						and what kind of projects they've contributed to.
+					</p>
+					<a href="{{.loginUrl}}">Sign in with Github</a>
+				</div>
+			</div>
+		</div>
+	</header>
+{{end}}
 
 {{template "footer.html" .}}
