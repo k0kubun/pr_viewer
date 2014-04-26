@@ -8,12 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/public/css/application.css">
     <link rel="shortcut icon" type="image/png" href="/public/img/favicon.png">
     <script src="/public/js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
-    {{range .moreStyles}}
-      <link rel="stylesheet" type="text/css" href="/public/{{.}}">
-    {{end}}
-    {{range .moreScripts}}
-      <script src="/public/{{.}}" type="text/javascript" charset="utf-8"></script>
-    {{end}}
+    <script src="/public/js/application.js" type="text/javascript" charset="utf-8"></script>
   </head>
   <body>
 	  <div class="navbar navbar-fixed-top">
@@ -22,6 +17,9 @@
 					<a class="brand" href="/">
 						Pull Req Viewer
 					</a>
+					<form class="navbar-search">
+						<input type="text" class="search-query" placeholder="username">
+					</form>
 					<ul class="nav pull-right">
 						<li>
 							{{if .loginUser}}
