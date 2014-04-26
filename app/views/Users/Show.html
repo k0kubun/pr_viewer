@@ -23,7 +23,7 @@
 		<a href="#" id="#closed" class="tab-change">Closed</a>
 	</li>
 	<li>
-		<a href="#" id="#repositories" class="tab-change">Repositories</a>
+		<a href="#" id="#repositories" class="tab-change">Contributed</a>
 	</li>
 </ul>
 
@@ -40,9 +40,18 @@
 </div>
 
 <div id="repositories" class="tab-content">
-	{{range .repos}}
-	{{.Name}}
-	{{end}}
+	<table class="table table-bordered">
+		<thead><tr><th>Name</th></tr></thead>
+		<tbody>
+			{{range .repos}}
+			<tr>
+				<td>
+					{{.Name}}
+				</td>
+			</tr>
+			{{end}}
+		</tbody>
+	</table>
 </div>
 
 {{template "footer.html" .}}

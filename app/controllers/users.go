@@ -22,12 +22,17 @@ func (c Users) Show(login string) revel.Result {
 }
 
 func (c Users) Update(login string) revel.Result {
+	if c.RenderArgs["loginUser"] == nil {
+		return c.Redirect(routes.Users.Show(login))
+	}
+	c.loginUser = c.RenderArgs["loginUser"].(*models.User)
+
 	user := models.FindUserBy(map[string]string{"Login": login})
 	if user == nil {
 		return c.Redirect(routes.Users.Show(login))
 	}
 
-	githubRepositories, _, err := user.Github().Repositories.List(login, nil)
+	githubRepositories, _, err := c.loginUser.Github().Repositories.List(login, nil)
 	if err != nil {
 		panic(err)
 	}
