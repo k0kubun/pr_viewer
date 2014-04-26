@@ -17,6 +17,7 @@ func InitDB() {
 
 	models.DbMap.AddTable(models.User{}).SetKeys(true, "Id")
 	models.DbMap.AddTable(models.Repository{}).SetKeys(true, "Id")
+	models.DbMap.AddTable(models.PullRequest{}).SetKeys(true, "Id")
 
 	models.DbMap.DropTables()
 	models.DbMap.CreateTables()

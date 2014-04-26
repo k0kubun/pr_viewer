@@ -6,6 +6,13 @@ import (
 	"strconv"
 )
 
+type User struct {
+	Id          int
+	Login       string
+	AvatarURL   string
+	AccessToken string
+}
+
 func CreateUser(attributes map[string]string) *User {
 	user := User{
 		Login:       attributes["Login"],
@@ -44,13 +51,6 @@ func FindOrCreateUserBy(attributes map[string]string) *User {
 		return user
 	}
 	return CreateUser(attributes)
-}
-
-type User struct {
-	Id          int
-	Login       string
-	AvatarURL   string
-	AccessToken string
 }
 
 func (user *User) Github() *github.Client {

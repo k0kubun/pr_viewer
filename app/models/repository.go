@@ -7,6 +7,7 @@ import (
 type Repository struct {
 	Id     int
 	UserId int
+	Owner  string
 	Name   string
 }
 
@@ -15,6 +16,7 @@ func CreateRepository(attributes map[string]string) *Repository {
 	repository := Repository{
 		UserId: userId,
 		Name:   attributes["Name"],
+		Owner:  attributes["Owner"],
 	}
 	DbMap.Insert(&repository)
 	return &repository

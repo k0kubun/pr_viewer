@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/revel/revel"
 	"pr_viewer/app/models"
 	"pr_viewer/app/routes"
@@ -27,9 +28,15 @@ func (c Users) Update(login string) revel.Result {
 	}
 	c.loginUser = c.RenderArgs["loginUser"].(*models.User)
 
+	c.getRepositories(login)
+	c.getPullRequests(login)
+	return c.Redirect(routes.Users.Show(login))
+}
+
+func (c Users) getRepositories(login string) {
 	user := models.FindUserBy(map[string]string{"Login": login})
 	if user == nil {
-		return c.Redirect(routes.Users.Show(login))
+		return
 	}
 
 	githubRepositories, _, err := c.loginUser.Github().Repositories.List(login, nil)
@@ -37,10 +44,31 @@ func (c Users) Update(login string) revel.Result {
 		panic(err)
 	}
 	for _, githubRepository := range githubRepositories {
+		owner := githubRepository.Owner
+		fmt.Println(*githubRepository.Fork)
+		if *githubRepository.Fork == true {
+			githubRepositoryWithParent, _, err := c.loginUser.Github().Repositories.Get(*owner.Login, *githubRepository.Name)
+			if err != nil {
+				panic(err)
+			}
+			owner = githubRepositoryWithParent.Parent.Owner
+		}
 		models.FindOrCreateRepositoryBy(map[string]string{
 			"UserId": strconv.Itoa(user.Id),
 			"Name":   *githubRepository.Name,
+			"Owner":  *owner.Login,
 		})
 	}
-	return c.Redirect(routes.Users.Show(login))
+}
+
+func (c Users) getPullRequests(login string) {
+	user := models.FindUserBy(map[string]string{"Login": login})
+	if user == nil {
+		return
+	}
+
+	for _, repository := range user.Repositories() {
+		//githubPullRequests, _, err := c.loginUser.Github().PullRequests.List()
+		fmt.Println(repository.Owner)
+	}
 }
