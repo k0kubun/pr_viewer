@@ -19,6 +19,7 @@ func (c Users) Show(login string) revel.Result {
 		return c.Redirect(routes.Application.Index())
 	}
 	c.RenderArgs["repos"] = c.loginUser.Repositories()
+	c.RenderArgs["pullRequests"] = c.loginUser.PullRequests()
 	return c.Render()
 }
 

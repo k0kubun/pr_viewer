@@ -67,6 +67,10 @@ func (user *User) Repositories() []*Repository {
 	})
 }
 
+func (user *User) PullRequests() []*PullRequest {
+	return PullRequestsBy(map[string]string{})
+}
+
 func (user *User) Save() {
 	DbMap.Update(user)
 }

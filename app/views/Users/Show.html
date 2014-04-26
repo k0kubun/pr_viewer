@@ -28,7 +28,18 @@
 </ul>
 
 <div id="merged" class="tab-content active">
-	Merged
+	<table class="table table-bordered">
+		<thead><tr><th>Name</th></tr></thead>
+		<tbody>
+			{{range .pullRequests}}
+			<tr>
+				<td>
+					{{.RepositoryId}}#{{.Number}}
+				</td>
+			</tr>
+			{{end}}
+		</tbody>
+	</table>
 </div>
 
 <div id="open" class="tab-content">
