@@ -68,7 +68,7 @@ func (user *User) Repositories() []*Repository {
 }
 
 func (user *User) PullRequests() []*PullRequest {
-	return PullRequestsBy(map[string]string{})
+	return PullRequestsByRepositories(user.Repositories())
 }
 
 func (user *User) Save() {

@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 type PullRequest struct {
@@ -28,6 +30,29 @@ func CreatePullRequest(attributes map[string]string) *PullRequest {
 
 func PullRequestsBy(attributes map[string]string) []*PullRequest {
 	query := SelectQuery("PullRequest", attributes)
+
+	rows, err := DbMap.Select(PullRequest{}, query)
+	if err != nil {
+		panic(err)
+	}
+
+	var pullRequests []*PullRequest
+	for _, row := range rows {
+		pullRequests = append(pullRequests, row.(*PullRequest))
+	}
+	return pullRequests
+}
+
+func PullRequestsByRepositories(repositories []*Repository) []*PullRequest {
+	repositoryIds := []string{}
+	for _, repository := range repositories {
+		repositoryIds = append(repositoryIds, strconv.Itoa(repository.Id))
+	}
+
+	query := fmt.Sprintf(
+		"select * from PullRequest where RepositoryId IN (%s)",
+		strings.Join(repositoryIds, ","),
+	)
 
 	rows, err := DbMap.Select(PullRequest{}, query)
 	if err != nil {

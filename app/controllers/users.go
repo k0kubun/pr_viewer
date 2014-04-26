@@ -74,8 +74,11 @@ func (c Users) getPullRequests(login string) {
 
 	for _, repository := range user.Repositories() {
 		options := &github.PullRequestListOptions{State: "closed"}
-		githubPullRequests, _, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
+		githubPullRequests, res, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
 		if err != nil {
+			if res.Status == "404 Not Found" {
+				continue
+			}
 			panic(err)
 		}
 		c.createPullRequests(login, repository, githubPullRequests)
