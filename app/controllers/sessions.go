@@ -22,20 +22,12 @@ func (c Sessions) Create(code string) revel.Result {
 	transport := &oauth.Transport{Config: GITHUB}
 	token, err := transport.Exchange(code)
 	if err != nil {
-		revel.ERROR.Println(err)
+		panic(err)
 		return c.Redirect(Application.Index)
 	}
 
-	accessToken := token.AccessToken
-	c.Session["accessToken"] = accessToken
-	c.loginUser = models.FindUserBy(map[string]string{"AccessToken": accessToken})
-	if c.loginUser == nil {
-		c.loginUser = models.CreateUser(map[string]string{
-			"AccessToken": accessToken,
-		})
-	}
-	c.RenderArgs["loginUser"] = c.loginUser
-	c.setUserAttributes()
+	c.authorizeUserByAccessToken(token.AccessToken)
+	c.updateUserAttributes()
 	return c.Redirect(Application.Index)
 }
 
@@ -44,4 +36,46 @@ func (c Sessions) Destroy() revel.Result {
 		delete(c.Session, key)
 	}
 	return c.Redirect(Application.Index)
+}
+
+func (c Sessions) authorizeUserByAccessToken(accessToken string) {
+	user := &models.User{AccessToken: accessToken}
+	githubUser, _, err := user.Github().Users.Get("")
+	if err != nil {
+		panic(err)
+	}
+	login := *githubUser.Login
+	c.Session["Login"] = login
+
+	c.loginUser = models.FindUserBy(map[string]string{"Login": login})
+	if c.loginUser == nil {
+		c.loginUser = models.CreateUser(map[string]string{
+			"Login": login,
+		})
+	}
+	if c.loginUser != nil {
+		c.loginUser.AccessToken = accessToken
+		c.loginUser.Save()
+	}
+	c.RenderArgs["loginUser"] = c.loginUser
+}
+
+func (c Sessions) updateUserAttributes() {
+	if c.RenderArgs["loginUser"] != nil {
+		c.loginUser = c.RenderArgs["loginUser"].(*models.User)
+	}
+	if c.loginUser == nil {
+		return
+	}
+
+	client := c.loginUser.Github()
+	if client != nil {
+		githubUser, _, err := client.Users.Get("")
+		if err != nil {
+			panic(err)
+		}
+		c.loginUser.Login = *githubUser.Login
+		c.loginUser.AvatarURL = *githubUser.AvatarURL
+		c.loginUser.Save()
+	}
 }

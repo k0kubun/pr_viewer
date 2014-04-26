@@ -22,8 +22,8 @@ func (c Application) Index() revel.Result {
 }
 
 func (c Application) authorize() revel.Result {
-	if accessToken, ok := c.Session["accessToken"]; ok {
-		c.loginUser = models.FindUserBy(map[string]string{"AccessToken": accessToken})
+	if login, ok := c.Session["Login"]; ok {
+		c.loginUser = models.FindUserBy(map[string]string{"Login": login})
 		c.RenderArgs["loginUser"] = c.loginUser
 	}
 	return nil
@@ -32,21 +32,4 @@ func (c Application) authorize() revel.Result {
 func (c Application) setLoginUrl() revel.Result {
 	c.RenderArgs["loginUrl"] = GITHUB.AuthCodeURL("")
 	return nil
-}
-
-func (c Application) setUserAttributes() {
-	if c.loginUser == nil {
-		return
-	}
-
-	client := c.loginUser.Github()
-	if client != nil {
-		githubUser, _, err := client.Users.Get("")
-		if err != nil {
-			panic(err)
-		}
-		c.loginUser.Login = *githubUser.Login
-		c.loginUser.AvatarURL = *githubUser.AvatarURL
-		c.loginUser.Save()
-	}
 }

@@ -7,8 +7,10 @@ import (
 )
 
 func CreateUser(attributes map[string]string) *User {
-	accessToken := attributes["AccessToken"]
-	user := User{0, "", "", accessToken}
+	user := User{
+		Login:       attributes["Login"],
+		AccessToken: attributes["AccessToken"],
+	}
 	DbMap.Insert(&user)
 	return &user
 }
