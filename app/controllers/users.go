@@ -46,18 +46,23 @@ func (c Users) getRepositories(login string) {
 	}
 	for _, githubRepository := range githubRepositories {
 		owner := githubRepository.Owner
+		url := *githubRepository.HTMLURL
 		if *githubRepository.Fork == true {
 			githubRepositoryWithParent, _, err := c.loginUser.Github().Repositories.Get(*owner.Login, *githubRepository.Name)
 			if err != nil {
 				panic(err)
 			}
 			owner = githubRepositoryWithParent.Parent.Owner
+			url = *githubRepositoryWithParent.Parent.HTMLURL
 		}
-		models.FindOrCreateRepositoryBy(map[string]string{
+
+		repository := models.FindOrCreateRepositoryBy(map[string]string{
 			"UserId": strconv.Itoa(user.Id),
 			"Name":   *githubRepository.Name,
 			"Owner":  *owner.Login,
 		})
+		repository.Url = url
+		repository.Save()
 	}
 }
 

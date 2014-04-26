@@ -57,6 +57,10 @@ func FindOrCreatePullRequestBy(attributes map[string]string) *PullRequest {
 	return CreatePullRequest(attributes)
 }
 
+func (pullRequest *PullRequest) Repository() *Repository {
+	return FindRepositoryBy(map[string]string{"Id": strconv.Itoa(pullRequest.RepositoryId)})
+}
+
 func (pullRequest *PullRequest) Save() {
 	DbMap.Update(pullRequest)
 }

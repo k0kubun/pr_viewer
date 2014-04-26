@@ -9,6 +9,7 @@ type Repository struct {
 	UserId int
 	Owner  string
 	Name   string
+	Url    string
 }
 
 func CreateRepository(attributes map[string]string) *Repository {
@@ -51,4 +52,8 @@ func FindOrCreateRepositoryBy(attributes map[string]string) *Repository {
 		return repository
 	}
 	return CreateRepository(attributes)
+}
+
+func (repository *Repository) Save() {
+	DbMap.Update(repository)
 }

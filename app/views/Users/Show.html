@@ -39,10 +39,10 @@
 			{{range .pullRequests}}
 			<tr>
 				<td>
-					<a href="{{.Url}}">
-					{{.RepositoryId}}
-					{{.State}}
+					<a href="{{.Repository.Url}}">
+						{{.Repository.Owner}}/<strong>{{.Repository.Name}}</strong>
 					</a>
+					{{.State}}
 				</td>
 				<td>
 					<a href="{{.Url}}">
