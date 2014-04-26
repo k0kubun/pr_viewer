@@ -62,10 +62,7 @@ func (c Users) getRepositories(login string) {
 		return
 	}
 
-	githubRepositories, _, err := c.loginUser.Github().Repositories.List(login, nil)
-	if err != nil {
-		panic(err)
-	}
+	githubRepositories := c.allGithubRepositories(login)
 	for _, githubRepository := range githubRepositories {
 		owner := githubRepository.Owner
 		url := *githubRepository.HTMLURL
@@ -86,6 +83,25 @@ func (c Users) getRepositories(login string) {
 		repository.Url = url
 		repository.Save()
 	}
+}
+
+func (c Users) allGithubRepositories(login string) []github.Repository {
+	allGithubRepositories := []github.Repository{}
+
+	for i := 1; ; i++ {
+		options := &github.RepositoryListOptions{}
+		options.Page = i
+		githubRepositories, _, err := c.loginUser.Github().Repositories.List(login, options)
+		if err != nil {
+			panic(err)
+		}
+
+		if len(githubRepositories) == 0 {
+			break
+		}
+		allGithubRepositories = append(allGithubRepositories, githubRepositories...)
+	}
+	return allGithubRepositories
 }
 
 func (c Users) getPullRequests(login string) {

@@ -48,7 +48,9 @@
 			{{range .repos}}
 			<tr>
 				<td>
-					{{.Owner}}/<strong>{{.Name}}</strong>
+					<a href="{{.Url}}">
+						{{.Owner}}/<strong>{{.Name}}</strong>
+					</a>
 				</td>
 			</tr>
 			{{end}}
