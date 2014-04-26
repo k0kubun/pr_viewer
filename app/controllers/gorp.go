@@ -16,6 +16,8 @@ func InitDB() {
 	models.DbMap = &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
 
 	models.DbMap.AddTable(models.User{}).SetKeys(true, "Id")
+	models.DbMap.AddTable(models.Repository{}).SetKeys(true, "Id")
+
 	models.DbMap.DropTables()
 	models.DbMap.CreateTables()
 }

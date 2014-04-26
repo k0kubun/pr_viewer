@@ -9,3 +9,15 @@ body {
 .hero-text h1 {
   margin-bottom: 20px;
 }
+
+.button-wrapper {
+  margin-bottom: 30px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}

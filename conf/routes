@@ -6,6 +6,7 @@ module:testrunner
 
 GET     /                                       Application.Index
 GET     /users/:login                           Users.Show
+GET     /users/:login/update                    Users.Update
 GET     /auth                                   Sessions.Create
 GET     /logout                                 Sessions.Destroy
 

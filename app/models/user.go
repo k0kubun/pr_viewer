@@ -4,6 +4,8 @@ import (
 	"code.google.com/p/goauth2/oauth"
 	"fmt"
 	"github.com/google/go-github/github"
+	"strconv"
+	"strings"
 )
 
 func CreateUser(attributes map[string]string) *User {
@@ -18,7 +20,11 @@ func CreateUser(attributes map[string]string) *User {
 func FindUserBy(attributes map[string]string) *User {
 	query := "select * from User"
 	for key, value := range attributes {
-		query = fmt.Sprintf("%s where %s = '%s'", query, key, value)
+		if strings.Index(query, "where") == -1 {
+			query = fmt.Sprintf("%s where %s = '%s'", query, key, value)
+		} else {
+			query = fmt.Sprintf("%s and %s = '%s'", query, key, value)
+		}
 	}
 
 	users, err := DbMap.Select(User{}, query)
@@ -36,7 +42,6 @@ func FindOrCreateUserBy(attributes map[string]string) *User {
 	if user != nil {
 		return user
 	}
-
 	return CreateUser(attributes)
 }
 
@@ -66,6 +71,12 @@ func (user *User) Github() *github.Client {
 	}
 	client := github.NewClient(transport.Client())
 	return client
+}
+
+func (user *User) Repositories() []*Repository {
+	return RepositoriesBy(map[string]string{
+		"UserId": strconv.Itoa(user.Id),
+	})
 }
 
 func (user *User) Save() {

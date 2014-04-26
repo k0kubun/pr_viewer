@@ -1,6 +1,48 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
 
-<h1>{{.user.Login}}'s Pull Requests</h1>
+<h1>
+	{{.user.Login}}'s Pull Requests
+</h1>
+<div class="button-wrapper">
+	{{if .loginUser}}
+	<a href="/users/{{.user.Login}}/update" class="btn">
+		Refresh Data
+	</a>
+	{{end}}
+</div>
+
+<ul class="nav nav-tabs">
+	<li class="active">
+		<a href="#" id="#merged" class="tab-change">Merged</a>
+	</li>
+	<li>
+		<a href="#" id="#open" class="tab-change">Open</a>
+	</li>
+	<li>
+		<a href="#" id="#closed" class="tab-change">Closed</a>
+	</li>
+	<li>
+		<a href="#" id="#repositories" class="tab-change">Repositories</a>
+	</li>
+</ul>
+
+<div id="merged" class="tab-content active">
+	Merged
+</div>
+
+<div id="open" class="tab-content">
+	Open
+</div>
+
+<div id="closed" class="tab-content">
+	Closed
+</div>
+
+<div id="repositories" class="tab-content">
+	{{range .repos}}
+	{{.Name}}
+	{{end}}
+</div>
 
 {{template "footer.html" .}}
