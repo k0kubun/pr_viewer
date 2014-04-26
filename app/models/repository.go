@@ -5,11 +5,13 @@ import (
 )
 
 type Repository struct {
-	Id     int
-	UserId int
-	Owner  string
-	Name   string
-	Url    string
+	Id              int
+	UserId          int
+	Owner           string
+	Name            string
+	Url             string
+	Contributed     bool
+	StargazersCount int
 }
 
 func CreateRepository(attributes map[string]string) *Repository {

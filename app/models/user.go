@@ -67,6 +67,13 @@ func (user *User) Repositories() []*Repository {
 	})
 }
 
+func (user *User) ContributedRepositories() []*Repository {
+	return RepositoriesBy(map[string]string{
+		"UserId":      strconv.Itoa(user.Id),
+		"Contributed": "1",
+	})
+}
+
 func (user *User) PullRequests() []*PullRequest {
 	return PullRequestsByRepositories(user.Repositories())
 }

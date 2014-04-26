@@ -63,10 +63,18 @@
 
 <div id="repositories" class="tab-content">
 	<table class="table table-bordered">
-		<thead><tr><th>Name</th></tr></thead>
+		<thead>
+			<tr>
+				<th>Star</th>
+				<th>Name</th>
+			</tr>
+		</thead>
 		<tbody>
 			{{range .repos}}
 			<tr>
+				<td>
+					{{.StargazersCount}}
+				</td>
 				<td>
 					<a href="{{.Url}}">
 						{{.Owner}}/<strong>{{.Name}}</strong>

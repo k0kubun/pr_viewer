@@ -19,7 +19,7 @@ func (c Users) Show(login string) revel.Result {
 	if c.RenderArgs["user"] == nil {
 		return c.Redirect(routes.Application.Index())
 	}
-	c.RenderArgs["repos"] = c.user.Repositories()
+	c.RenderArgs["repos"] = c.user.ContributedRepositories()
 	c.loadPullRequests()
 	return c.Render()
 }
@@ -66,6 +66,7 @@ func (c Users) getRepositories(login string) {
 	for _, githubRepository := range githubRepositories {
 		owner := githubRepository.Owner
 		url := *githubRepository.HTMLURL
+		stargazersCount := *githubRepository.StargazersCount
 		if *githubRepository.Fork == true {
 			githubRepositoryWithParent, _, err := c.loginUser.Github().Repositories.Get(*owner.Login, *githubRepository.Name)
 			if err != nil {
@@ -73,6 +74,7 @@ func (c Users) getRepositories(login string) {
 			}
 			owner = githubRepositoryWithParent.Parent.Owner
 			url = *githubRepositoryWithParent.Parent.HTMLURL
+			stargazersCount = *githubRepositoryWithParent.Parent.StargazersCount
 		}
 
 		repository := models.FindOrCreateRepositoryBy(map[string]string{
@@ -81,6 +83,7 @@ func (c Users) getRepositories(login string) {
 			"Owner":  *owner.Login,
 		})
 		repository.Url = url
+		repository.StargazersCount = stargazersCount
 		repository.Save()
 	}
 }
@@ -112,7 +115,13 @@ func (c Users) getPullRequests(login string) {
 
 	for _, repository := range user.Repositories() {
 		githubPullRequests := c.allGithubPullRequests(repository)
-		c.createPullRequests(login, repository, githubPullRequests)
+		if len(githubPullRequests) > 0 {
+			c.createPullRequests(login, repository, githubPullRequests)
+			repository.Contributed = true
+		} else {
+			repository.Contributed = false
+		}
+		repository.Save()
 	}
 }
 
