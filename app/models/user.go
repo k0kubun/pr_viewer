@@ -31,6 +31,15 @@ func FindUserBy(attributes map[string]string) *User {
 	return users[0].(*User)
 }
 
+func FindOrCreateUserBy(attributes map[string]string) *User {
+	user := FindUserBy(attributes)
+	if user != nil {
+		return user
+	}
+
+	return CreateUser(attributes)
+}
+
 func AllUsers() []*User {
 	var users []*User
 	rows, err := DbMap.Select(User{}, "select * from User")
