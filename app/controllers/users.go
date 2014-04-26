@@ -79,23 +79,30 @@ func (c Users) getPullRequests(login string) {
 			panic(err)
 		}
 
-		for _, githubPullRequest := range githubPullRequests {
-			requester := githubPullRequest.User
-			if requester == nil {
-				continue
-			}
-			if user.Login != *requester.Login {
-				continue
-			}
+		c.createPullRequests(login, repository, githubPullRequests)
+	}
+}
 
-			pullRequest := models.FindOrCreatePullRequestBy(map[string]string{
-				"RepositoryId": strconv.Itoa(repository.Id),
-				"Number":       strconv.Itoa(*githubPullRequest.Number),
-			})
-			pullRequest.State = *githubPullRequest.State
-			pullRequest.Title = *githubPullRequest.Title
-			pullRequest.Url = *githubPullRequest.HTMLURL
-			pullRequest.Save()
+func (c Users) createPullRequests(login string, repository *models.Repository, githubPullRequests []github.PullRequest) {
+	for _, githubPullRequest := range githubPullRequests {
+		requester := githubPullRequest.User
+		if requester == nil {
+			continue
 		}
+		if login != *requester.Login {
+			continue
+		}
+
+		pullRequest := models.FindOrCreatePullRequestBy(map[string]string{
+			"RepositoryId": strconv.Itoa(repository.Id),
+			"Number":       strconv.Itoa(*githubPullRequest.Number),
+		})
+		pullRequest.State = *githubPullRequest.State
+		if pullRequest.State == "closed" && githubPullRequest.MergedAt != nil {
+			pullRequest.State = "merged"
+		}
+		pullRequest.Title = *githubPullRequest.Title
+		pullRequest.Url = *githubPullRequest.HTMLURL
+		pullRequest.Save()
 	}
 }
