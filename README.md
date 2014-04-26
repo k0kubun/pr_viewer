@@ -1,6 +1,7 @@
 # Pull Req Viewer
 
-Web application to see your pull requests made with Revel
+Web application to see your pull requests made with Revel.  
+**This product is not ready for production due to poor performance.**
 
 ## Run
 
