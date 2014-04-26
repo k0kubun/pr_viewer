@@ -10,16 +10,17 @@ import (
 
 type Users struct {
 	Application
+	user *models.User
 }
 
 func (c Users) Show(login string) revel.Result {
-	c.loginUser = models.FindOrCreateUserBy(map[string]string{"Login": login})
-	c.RenderArgs["user"] = c.loginUser
+	c.user = models.FindOrCreateUserBy(map[string]string{"Login": login})
+	c.RenderArgs["user"] = c.user
 	if c.RenderArgs["user"] == nil {
 		return c.Redirect(routes.Application.Index())
 	}
-	c.RenderArgs["repos"] = c.loginUser.Repositories()
-	c.RenderArgs["pullRequests"] = c.loginUser.PullRequests()
+	c.RenderArgs["repos"] = c.user.Repositories()
+	c.loadPullRequests()
 	return c.Render()
 }
 
@@ -32,6 +33,27 @@ func (c Users) Update(login string) revel.Result {
 	c.getRepositories(login)
 	c.getPullRequests(login)
 	return c.Redirect(routes.Users.Show(login))
+}
+
+func (c Users) loadPullRequests() {
+	pullRequests := c.user.PullRequests()
+	merged := []*models.PullRequest{}
+	closed := []*models.PullRequest{}
+	open := []*models.PullRequest{}
+
+	for _, pullRequest := range pullRequests {
+		switch pullRequest.State {
+		case "merged":
+			merged = append(merged, pullRequest)
+		case "closed":
+			closed = append(closed, pullRequest)
+		case "open":
+			open = append(open, pullRequest)
+		}
+	}
+	c.RenderArgs["merged"] = merged
+	c.RenderArgs["closed"] = closed
+	c.RenderArgs["open"] = open
 }
 
 func (c Users) getRepositories(login string) {

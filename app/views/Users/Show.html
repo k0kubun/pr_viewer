@@ -1,4 +1,3 @@
-{{set . "title" "Home"}}
 {{template "header.html" .}}
 
 <h1>
@@ -28,42 +27,18 @@
 </ul>
 
 <div id="merged" class="tab-content active">
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th>Repository</th>
-				<th>Title</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{range .pullRequests}}
-			<tr>
-				<td>
-					<a href="{{.Repository.Url}}">
-						{{.Repository.Owner}}/<strong>{{.Repository.Name}}</strong>
-					</a>
-					{{.State}}
-				</td>
-				<td>
-					<a href="{{.Url}}">
-					{{.Title}}
-					</a>
-					<span class="pull-right">
-						#{{.Number}}
-					</span>
-				</td>
-			</tr>
-			{{end}}
-		</tbody>
-	</table>
+	{{set . "pullRequests" .merged}}
+	{{template "Users/pullRequests.html" .}}
 </div>
 
 <div id="open" class="tab-content">
-	Open
+	{{set . "pullRequests" .open}}
+	{{template "Users/pullRequests.html" .}}
 </div>
 
 <div id="closed" class="tab-content">
-	Closed
+	{{set . "pullRequests" .closed}}
+	{{template "Users/pullRequests.html" .}}
 </div>
 
 <div id="repositories" class="tab-content">

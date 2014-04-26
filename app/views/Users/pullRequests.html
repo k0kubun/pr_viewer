@@ -1,0 +1,27 @@
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Repository</th>
+			<th>Title</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{range .pullRequests}}
+		<tr>
+			<td>
+				<a href="{{.Repository.Url}}">
+					{{.Repository.Owner}}/<strong>{{.Repository.Name}}</strong>
+				</a>
+			</td>
+			<td>
+				<a href="{{.Url}}">
+				{{.Title}}
+				</a>
+				<span class="pull-right">
+					#{{.Number}}
+				</span>
+			</td>
+		</tr>
+		{{end}}
+	</tbody>
+</table>
