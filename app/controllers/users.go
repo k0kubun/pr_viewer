@@ -78,7 +78,13 @@ func (c Users) getPullRequests(login string) {
 		if err != nil {
 			panic(err)
 		}
+		c.createPullRequests(login, repository, githubPullRequests)
 
+		options = &github.PullRequestListOptions{State: "open"}
+		githubPullRequests, _, err = c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
+		if err != nil {
+			panic(err)
+		}
 		c.createPullRequests(login, repository, githubPullRequests)
 	}
 }
