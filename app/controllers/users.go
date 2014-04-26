@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"github.com/google/go-github/github"
 	"github.com/revel/revel"
 	"pr_viewer/app/models"
 	"pr_viewer/app/routes"
@@ -45,7 +45,6 @@ func (c Users) getRepositories(login string) {
 	}
 	for _, githubRepository := range githubRepositories {
 		owner := githubRepository.Owner
-		fmt.Println(*githubRepository.Fork)
 		if *githubRepository.Fork == true {
 			githubRepositoryWithParent, _, err := c.loginUser.Github().Repositories.Get(*owner.Login, *githubRepository.Name)
 			if err != nil {
@@ -68,7 +67,16 @@ func (c Users) getPullRequests(login string) {
 	}
 
 	for _, repository := range user.Repositories() {
-		//githubPullRequests, _, err := c.loginUser.Github().PullRequests.List()
-		fmt.Println(repository.Owner)
+		options := &github.PullRequestListOptions{State: "closed"}
+		githubPullRequests, _, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
+		if err != nil {
+			panic(err)
+		}
+		for _, githubPullRequest := range githubPullRequests {
+			models.FindOrCreatePullRequestBy(map[string]string{
+				"RepositoryId": strconv.Itoa(repository.Id),
+				"Number":       strconv.Itoa(*githubPullRequest.Number),
+			})
+		}
 	}
 }

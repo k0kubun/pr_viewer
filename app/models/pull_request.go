@@ -25,8 +25,8 @@ func CreatePullRequest(attributes map[string]string) *PullRequest {
 	return &pullRequest
 }
 
-func PullRequestsBy() []*PullRequest {
-	query := SelectQuery("PullRequest", map[string]string{})
+func PullRequestsBy(attributes map[string]string) []*PullRequest {
+	query := SelectQuery("PullRequest", attributes)
 
 	rows, err := DbMap.Select(PullRequest{}, query)
 	if err != nil {
@@ -38,4 +38,20 @@ func PullRequestsBy() []*PullRequest {
 		pullRequests = append(pullRequests, row.(*PullRequest))
 	}
 	return pullRequests
+}
+
+func FindPullRequestBy(attributes map[string]string) *PullRequest {
+	pullRequests := PullRequestsBy(attributes)
+	if len(pullRequests) == 0 {
+		return nil
+	}
+	return pullRequests[0]
+}
+
+func FindOrCreatePullRequestBy(attributes map[string]string) *PullRequest {
+	pullRequest := FindPullRequestBy(attributes)
+	if pullRequest != nil {
+		return pullRequest
+	}
+	return CreatePullRequest(attributes)
 }
