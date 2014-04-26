@@ -73,11 +73,24 @@ func (c Users) getPullRequests(login string) {
 		if err != nil {
 			panic(err)
 		}
+
 		for _, githubPullRequest := range githubPullRequests {
-			models.FindOrCreatePullRequestBy(map[string]string{
+			requester := githubPullRequest.User
+			if requester == nil {
+				continue
+			}
+			if user.Login != *requester.Login {
+				continue
+			}
+
+			pullRequest := models.FindOrCreatePullRequestBy(map[string]string{
 				"RepositoryId": strconv.Itoa(repository.Id),
 				"Number":       strconv.Itoa(*githubPullRequest.Number),
 			})
+			pullRequest.State = *githubPullRequest.State
+			pullRequest.Title = *githubPullRequest.Title
+			pullRequest.Url = *githubPullRequest.HTMLURL
+			pullRequest.Save()
 		}
 	}
 }

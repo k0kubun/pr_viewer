@@ -29,12 +29,28 @@
 
 <div id="merged" class="tab-content active">
 	<table class="table table-bordered">
-		<thead><tr><th>Name</th></tr></thead>
+		<thead>
+			<tr>
+				<th>Repository</th>
+				<th>Title</th>
+			</tr>
+		</thead>
 		<tbody>
 			{{range .pullRequests}}
 			<tr>
 				<td>
-					{{.RepositoryId}}#{{.Number}}
+					<a href="{{.Url}}">
+					{{.RepositoryId}}
+					{{.State}}
+					</a>
+				</td>
+				<td>
+					<a href="{{.Url}}">
+					{{.Title}}
+					</a>
+					<span class="pull-right">
+						#{{.Number}}
+					</span>
 				</td>
 			</tr>
 			{{end}}

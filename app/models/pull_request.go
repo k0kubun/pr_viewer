@@ -10,6 +10,7 @@ type PullRequest struct {
 	Number       int
 	State        string
 	Title        string
+	Url          string
 }
 
 func CreatePullRequest(attributes map[string]string) *PullRequest {
@@ -54,4 +55,8 @@ func FindOrCreatePullRequestBy(attributes map[string]string) *PullRequest {
 		return pullRequest
 	}
 	return CreatePullRequest(attributes)
+}
+
+func (pullRequest *PullRequest) Save() {
+	DbMap.Update(pullRequest)
 }
