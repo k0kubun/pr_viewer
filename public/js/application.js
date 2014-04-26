@@ -10,7 +10,7 @@ jQuery(function($) {
     $(".tab-content").removeClass("active");
     $(".nav-tabs li").removeClass("active");
 
-    tabLink = $(event.target);
+    tabLink = $(event.target).closest("a");
     tab = tabLink.closest("li");
     tab.addClass("active");
 

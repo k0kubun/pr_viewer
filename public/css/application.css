@@ -14,6 +14,10 @@ body {
   margin-bottom: 30px;
 }
 
+.tab-change {
+  white-space: nowrap;
+}
+
 .tab-content {
   display: none;
 }

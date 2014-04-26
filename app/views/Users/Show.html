@@ -13,16 +13,36 @@
 
 <ul class="nav nav-tabs">
 	<li class="active">
-		<a href="#" id="#merged" class="tab-change">Merged</a>
+		<a href="#" id="#merged" class="tab-change">
+			Merged
+			<span class="badge badge-success">
+				{{len .merged}}
+			</span>
+		</a>
 	</li>
 	<li>
-		<a href="#" id="#open" class="tab-change">Open</a>
+		<a href="#" id="#open" class="tab-change">
+			Open
+			<span class="badge badge-warning">
+				{{len .open}}
+			</span>
+		</a>
 	</li>
 	<li>
-		<a href="#" id="#closed" class="tab-change">Closed</a>
+		<a href="#" id="#closed" class="tab-change">
+			Closed
+			<span class="badge badge-important">
+				{{len .closed}}
+			</span>
+		</a>
 	</li>
 	<li>
-		<a href="#" id="#repositories" class="tab-change">Contributed</a>
+		<a href="#" id="#repositories" class="tab-change">
+			Contributed
+			<span class="badge badge-info">
+				{{len .repos}}
+			</span>
+		</a>
 	</li>
 </ul>
 
