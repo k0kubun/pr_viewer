@@ -1,9 +1,7 @@
 package models
 
 import (
-	"fmt"
 	"strconv"
-	"strings"
 )
 
 type Repository struct {
@@ -23,14 +21,7 @@ func CreateRepository(attributes map[string]string) *Repository {
 }
 
 func RepositoriesBy(attributes map[string]string) []*Repository {
-	query := "select * from Repository"
-	for key, value := range attributes {
-		if strings.Index(query, "where") == -1 {
-			query = fmt.Sprintf("%s where %s = '%s'", query, key, value)
-		} else {
-			query = fmt.Sprintf("%s and %s = '%s'", query, key, value)
-		}
-	}
+	query := SelectQuery("Repository", attributes)
 
 	rows, err := DbMap.Select(Repository{}, query)
 	if err != nil {

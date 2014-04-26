@@ -2,10 +2,8 @@ package models
 
 import (
 	"code.google.com/p/goauth2/oauth"
-	"fmt"
 	"github.com/google/go-github/github"
 	"strconv"
-	"strings"
 )
 
 func CreateUser(attributes map[string]string) *User {
@@ -17,24 +15,27 @@ func CreateUser(attributes map[string]string) *User {
 	return &user
 }
 
-func FindUserBy(attributes map[string]string) *User {
-	query := "select * from User"
-	for key, value := range attributes {
-		if strings.Index(query, "where") == -1 {
-			query = fmt.Sprintf("%s where %s = '%s'", query, key, value)
-		} else {
-			query = fmt.Sprintf("%s and %s = '%s'", query, key, value)
-		}
-	}
+func UsersBy(attributes map[string]string) []*User {
+	query := SelectQuery("User", attributes)
 
-	users, err := DbMap.Select(User{}, query)
+	rows, err := DbMap.Select(User{}, query)
 	if err != nil {
 		panic(err)
 	}
+
+	var users []*User
+	for _, row := range rows {
+		users = append(users, row.(*User))
+	}
+	return users
+}
+
+func FindUserBy(attributes map[string]string) *User {
+	users := UsersBy(attributes)
 	if len(users) == 0 {
 		return nil
 	}
-	return users[0].(*User)
+	return users[0]
 }
 
 func FindOrCreateUserBy(attributes map[string]string) *User {
@@ -43,19 +44,6 @@ func FindOrCreateUserBy(attributes map[string]string) *User {
 		return user
 	}
 	return CreateUser(attributes)
-}
-
-func AllUsers() []*User {
-	var users []*User
-	rows, err := DbMap.Select(User{}, "select * from User")
-	if err != nil {
-		panic(err)
-	}
-	for _, row := range rows {
-		user := row.(*User)
-		users = append(users, user)
-	}
-	return users
 }
 
 type User struct {
