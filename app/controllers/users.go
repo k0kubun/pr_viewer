@@ -111,23 +111,43 @@ func (c Users) getPullRequests(login string) {
 	}
 
 	for _, repository := range user.Repositories() {
-		options := &github.PullRequestListOptions{State: "closed"}
-		githubPullRequests, res, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
-		if err != nil {
-			if res.Status == "404 Not Found" {
-				continue
-			}
-			panic(err)
-		}
-		c.createPullRequests(login, repository, githubPullRequests)
-
-		options = &github.PullRequestListOptions{State: "open"}
-		githubPullRequests, _, err = c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
-		if err != nil {
-			panic(err)
-		}
+		githubPullRequests := c.allGithubPullRequests(repository)
 		c.createPullRequests(login, repository, githubPullRequests)
 	}
+}
+
+func (c Users) allGithubPullRequests(repository *models.Repository) []github.PullRequest {
+	allGithubPullRequests := []github.PullRequest{}
+
+	for i := 1; ; i++ {
+		options := &github.PullRequestListOptions{State: "closed"}
+		options.Page = i
+		githubPullRequests, res, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
+		if err == nil {
+			if len(githubPullRequests) == 0 {
+				break
+			}
+			allGithubPullRequests = append(allGithubPullRequests, githubPullRequests...)
+		} else if res.Status != "404 Not Found" {
+			panic(err)
+		}
+	}
+
+	for i := 1; ; i++ {
+		options := &github.PullRequestListOptions{State: "open"}
+		options.Page = i
+		githubPullRequests, res, err := c.loginUser.Github().PullRequests.List(repository.Owner, repository.Name, options)
+		if err == nil {
+			if len(githubPullRequests) == 0 {
+				break
+			}
+			allGithubPullRequests = append(allGithubPullRequests, githubPullRequests...)
+		} else if res.Status != "404 Not Found" {
+			panic(err)
+		}
+	}
+
+	return allGithubPullRequests
 }
 
 func (c Users) createPullRequests(login string, repository *models.Repository, githubPullRequests []github.PullRequest) {
