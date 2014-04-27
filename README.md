@@ -7,6 +7,7 @@ Web application to see your pull requests made with Revel.
 
 ```bash
 $ go get github.com/revel/cmd/revel
+$ go get github.com/k0kubun/pr_viewer
 $ revel run github.com/k0kubun/pr_viewer
 ```
 
