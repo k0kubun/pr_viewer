@@ -3,9 +3,9 @@ package controllers
 import (
 	"database/sql"
 	"github.com/coopernurse/gorp"
+	"github.com/k0kubun/pr_viewer/app/models"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/revel/revel"
-	"pr_viewer/app/models"
 )
 
 func InitDB() {

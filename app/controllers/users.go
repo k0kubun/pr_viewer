@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"github.com/google/go-github/github"
+	"github.com/k0kubun/pr_viewer/app/models"
+	"github.com/k0kubun/pr_viewer/app/routes"
 	"github.com/revel/revel"
-	"pr_viewer/app/models"
-	"pr_viewer/app/routes"
 	"strconv"
 )
 

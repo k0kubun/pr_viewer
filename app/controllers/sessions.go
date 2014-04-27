@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"code.google.com/p/goauth2/oauth"
+	"github.com/k0kubun/pr_viewer/app/models"
 	"github.com/revel/revel"
-	"pr_viewer/app/models"
 )
 
 type Sessions struct {
