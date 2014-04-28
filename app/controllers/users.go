@@ -30,8 +30,11 @@ func (c Users) Update(login string) revel.Result {
 	}
 	c.loginUser = c.RenderArgs["loginUser"].(*models.User)
 
-	c.getRepositories(login)
-	c.getPullRequests(login)
+	go func() {
+		c.getRepositories(login)
+		c.getPullRequests(login)
+	}()
+
 	return c.Redirect(routes.Users.Show(login))
 }
 
